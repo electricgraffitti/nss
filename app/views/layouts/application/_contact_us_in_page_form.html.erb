@@ -1,0 +1,40 @@
+<div id="page_contact_form" class="full_row splat">
+	<h3 class="title">
+		Contact Us:
+	</h3>
+	<div class="form">
+		<%= form_for(@email_list) do |f| %>
+			<%= render :partial => "layouts/error_block", :locals => {:obj => @email_list} %>
+			<div class="hidden">
+  			<%= text_field_tag :check %>
+			</div>
+			<div class="column_left">
+			<div class="field">
+  			<%= f.text_field :name, :placeholder => "Name", "data-validate" => "validate(required)", :class => "round" %>
+			</div>
+			<div class="field">
+  			<%= f.text_field :email, :placeholder => "Email Address", "data-validate" => "validate(required, email)", :class => "round" %>
+			</div>
+			<div class="field">
+  			<%= f.text_field :phone, :placeholder => "Phone (8011232233)", "data-validate" => "validate(required, number, minlength(10), maxlength(10))", :class => "round" %>
+			</div>
+		</div>
+		<div class="column_right">
+			<div class="field">
+  			<%= f.text_area :comments, :placeholder => "Additional Comments", :class => "round" %>
+			</div>
+		</div>
+			<div class="actions">
+  			<%= f.submit 'Contact Us', :class => "button purple_button" %>
+			</div>
+		<% end %>
+	</div>
+</div>
+
+<% content_for :javascripts do %>
+	<script>
+  	$(function() {
+  		Forms.validateFreePdf();
+  	});
+	</script>
+<% end %> 
