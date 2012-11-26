@@ -19,7 +19,7 @@
 
 <%#= csrf_meta_tag %>
 <title><%= @page_title ? "#{@page_title} | #{APP['app_name']}" : APP['app_name'] %></title>
-<%= stylesheet_link_tag 'core', 'application/application' %>
+<%= stylesheet_link_tag 'login' %>
 <%= yield :headmeta %>
 
 <%= javascript_include_tag "tp-scripts/preload" %>

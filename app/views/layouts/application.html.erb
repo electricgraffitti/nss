@@ -16,9 +16,8 @@
     <%# Header %>
     <div id="mast_header" class="content_wrapper">
       <div id="hd" class="internal_content_wrapper">
-        <%= link_to "Kos Journey", root_url, :id => "logo" %>
+        <%= link_to "Nucleus Student Setup", root_url, :id => "logo" %>
         <%= render :partial => "layouts/application/main_nav" %>
-        <%= render :partial => 'layouts/application/header_phone' %>
       </div>
     </div>
     <%= clear %>
@@ -30,7 +29,6 @@
         Loading...
       </div>
       <div id="bd" class="content_wrapper">
-        <%= render :partial => 'layouts/player_divs' %>
         <%= yield %>
     		<%= clear %>
       </div>
@@ -45,7 +43,6 @@
     <%= yield :overlays %>
     <%= render :partial => "layouts/cdn_scripts" %>
     <%= render :partial => "layouts/application/scripts" %>
-    <%= render :partial => "layouts/application/google_analytics" %>
   </body>
 
 </html>

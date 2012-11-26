@@ -1,0 +1,9 @@
+development:
+ app_name: Nucleus Student Setup
+ super_user: cube2
+ super_pass: coffee
+
+production:
+ app_name: Nucleus Student Setup
+ super_user: cube2
+ super_pass: coffee
