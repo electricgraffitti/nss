@@ -1,0 +1,9 @@
+<h1 id="nucleus_logo">Nucleus</h1>
+<div id="client_meta">
+    <div id="welcome_user" class="tooltip" data-tooltiptype="micro" data-tooltiptitle="<%= current_admin.name %>" >Hello, <%= current_admin.name %></div>
+</div>
+<nav id="master_navigation" class="black_gradient">
+	<%= render partial: "layouts/application/main_nav" %>
+	<%= render partial: 'layouts/application/quick_nav' %>
+</nav>
+<%= render partial: 'layouts/application/title_bar', locals: {page_title: @page_title} %>

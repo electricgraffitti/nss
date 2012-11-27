@@ -1,17 +1,9 @@
-<div class="full_row">
-	<%= render :partial => 'layouts/application/footer_nav' %>
-	<%= render :partial => 'layouts/application/footer_social' %>
-	<div class="imagine_info">
-		<p>
-			Imagine Education<br />
-			P.O. Box 2276<br />
-			Taos, NM 87571<br />
-			Phone: 801.657.1035
-		</p>
-		<div class="footer_logo">
-			<%= link_to "Imagine Education", "http://www.imagineeducation.org" %>
-		</div>
+<footer id="ft">
+	<div id="footer">
+	  <div id="copyright_container" class="footer_text">
+	    © <%= Time.now.year %> Verisk Health Inc. | CPT<sup class="superScript">®</sup> © <%= Time.now.year %> American Medical Association. | Current
+	                    Dental Terminology. © <%= Time.now.year %> American Dental Association. | All rights reserved.
+	  </div>
+	  <div id="build_version" class="footer_text">Version: <%= APP['version_number'] %></div>
 	</div>
-
-
-</div>
+</footer>

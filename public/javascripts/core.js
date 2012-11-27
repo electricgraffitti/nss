@@ -33,9 +33,27 @@ var Flash = {
   }
 };
 
+var Navigation = {
+
+  setCurrentNav: function() {
+    var url = location.pathname,
+        all_links = $('ul.main_nav li'),
+        current_link = $('ul.main_nav li a[href$="' + url + '"]'),
+        active_link = current_link.parent("li");
+
+    if (url == "/") {
+      all_links.removeClass('active');
+      $('.home').addClass('active');
+    } else {
+      all_links.removeClass('active');
+      active_link.addClass('active');
+    }
+  }
+};
+
 var Ajax = {
   
-  ajaxIcon: "<p>Processing... <img src='/images/ajax-loader.gif'/></p>",
+  ajaxIcon: "<img src='/images/ajax-loader.gif'/>",
 
   ajaxFlash: function() {
   },
@@ -78,217 +96,251 @@ var Utility = {
          }
       }
    return checkResult;
-  },
-
-  updateTotals: function(discountAmount) {
-    var cartPrice = $(".plan_price"),
-        cartTotal = $("#cart_totals .cart_total span"),
-        totalField = $("#total_price"),
-        teacherField = $("#teacher_count"),
-        studentField = $("#student_count"),
-        newStudentTotal = (Utility.calculateInputValue($("#students"), 12)),
-        newTeacherTotal = (Utility.calculateInputValue($("#teachers"), 20)),
-        newTotal = Utility.calculateTotal(newStudentTotal, newTeacherTotal, discountAmount);
-
-      cartTotal.text("$" + newTotal + ".00");
-      cartPrice.text("$" + newTotal + ".00");
-      totalField.val(newTotal);
-      studentField.val($("#add_more #students").val());
-      teacherField.val($("#add_more #teachers").val());
-  },
-
-  calculateInputValue: function (element, multiplier) {
-    var value = parseInt(element.val()) * multiplier
-    if (value >= 1) {
-      return value
-    } else {
-      return 0
-    }
-  },
-
-  calculateDiscount: function (response) {
-    var discountAmount = Utility.checkForDiscountValue(response);
-        cartBlock = $("#cart_totals");
-    Utility.updateTotals(discountAmount);
-    cartBlock.data("cart-discount", discountAmount)
-  },
-
-  checkForDiscountValue: function(response) {
-    var currentValue = response.discount_value;
-
-    if (currentValue == null) {
-      return currentValue = 100;
-    } else {
-      return parseInt(currentValue);
-    }
-  },
-
-  calculateTotal: function(studentTotal, teacherTotal, discountAmount) {
-    if (discountAmount > 0) {
-      return Utility.calculateTotalWithDiscount(studentTotal, teacherTotal, discountAmount);
-    } else {
-      return studentTotal + teacherTotal;
-    }
-  },
-
-  calculateTotalWithDiscount: function(studentTotal, teacherTotal, discountAmount) {
-    var total = ((studentTotal + teacherTotal) - discountAmount);
-
-    if (total < 0 ) {
-      return 0;
-    } else {
-      return total;
-    }
   }
-
 };
 
-var FormFuncs = {
+var ToolTips = {
 
-  swapQuestionType: function() {
-    
-    var form = $("#new_ko_question"),
-        shortAnswerView = form.find("#short_answer"),
-        multipleChoiceView = form.find("#multiple_choice"),
-        multipleChoiceViewFields = multipleChoiceView.find(".field"),
-        choiceSelector = form.find("#ko_question_question_type");
-        
-    choiceSelector.change(function() {      
-      if ($(this).val() === "Essay") {
-        shortAnswerView.show();
-        multipleChoiceView.hide();
-        multipleChoiceViewFields.each(function(i,v) {
-          $(this).children("input").val("");
-          $(this).find("input:checkbox").removeAttr("checked");
-        });
-      } else {
-        shortAnswerView.hide();
-        multipleChoiceView.show();
+  initToolTips: function () {
+    ToolTips.triggerToolTips();
+  },
+
+  toolTipSwitch: function (triggerElement) {
+    var toolTipType = triggerElement.data("tooltiptype");
+    ToolTips.removeToolTip();
+    switch (toolTipType) {
+      case 'micro':
+        ToolTips.microToolTip(triggerElement, toolTipType);
+        break;
+      case 'info':
+        ToolTips.infoToolTip(triggerElement, toolTipType);
+        break;
+      default:
+        ToolTips.microToolTip(triggerElement, toolTipType);
+        break;
+    }
+  },
+
+  removeToolTip: function () {
+    var toolTip = jQuery("#tool_tip_wrap");
+    toolTip.remove();
+  },
+
+  microToolTip: function (triggerElement, toolTipType) {
+    var toolTipContent = ToolTips.getMicroTipValue(triggerElement),
+        toolTip = ToolTips.createToolTip(toolTipType, toolTipContent);
+
+    ToolTips.drawToolTip(triggerElement, toolTip);
+  },
+
+  infoToolTip: function (triggerElement, toolTipType) {
+    var toolTipContent = ToolTips.getRemoteContent(triggerElement.data('tooltipdataurl')),
+        toolTipHeader = ToolTips.buildToolTipHeader(triggerElement, toolTipContent),
+        toolTip = ToolTips.createToolTip(toolTipType, toolTipContent, toolTipHeader);
+
+    ToolTips.drawToolTip(triggerElement, toolTip);
+  },
+
+  getRemoteContent: function (toolTipContentUrl) {
+    var content;
+    jQuery.ajax({
+      url: toolTipContentUrl,
+      cache: true,
+      async: false,
+      success: function (data) {
+        content = $(data).find('.tooltip_content');
       }
-    }); 
-        
+    });
+    return content;
   },
 
-  disableSubmit: function(formElement) {
-    var button = formElement.find(".actions .button");
-
-    button.attr("disabled", "disabled");
-    button.attr("value", "Processing");
-    button.removeClass("purple_button");
-    button.addClass("orange_button");
-  },
-
-  appendAjaxNotice: function (formElement) {
-    var formSubmit = formElement.find("#user_video_submit"),
-        submitWrap = formSubmit.parent();
-
-        formSubmit.hide();
-        submitWrap.append(VideoUploader.videoProcessingIcon);
-  },
-
-  checkForEmptyValue: function(formElement) {
-    if (formElement.val() === "") {
-      return true;
+  getMicroTipValue: function (triggerElement) {
+    if (triggerElement.data("tooltiptitle")) {
+      return triggerElement.data("tooltiptitle");
+    } else if (triggerElement.attr("title")) {
+      return triggerElement.attr("title");
+    } else {
+      return triggerElement.next().text();
     }
   },
 
-  validatePricingForm: function () {
-    $("#pricing_form").bind('fieldIsInvalid', function(event, form, el) {
-      el.focus();
-    }).ketchup({
-      validateEvents: 'blur keyup'
-    });
+  createToolTip: function (toolTipType, content, header) {
+    var toolTip = ToolTips.createToolTipWrapperHtml(),
+        toolTipContent = ToolTips.createToolTipContentHtml(),
+        toolTipArrow = ToolTips.createToolTipArrowHtml();
+
+    toolTipContent.html(content);
+    toolTip.append(header);
+    toolTip.append(toolTipContent);
+    toolTip.append(toolTipArrow);
+    toolTip.addClass(toolTipType);
+
+    return toolTip;
   },
 
-  pricingCalculator: function() {
-    var userInputs = $(".pricing_rows input"),
-        totalPrice = $("#total_price"),
-        totalPriceField = $("#total_price_tag");
-
-    userInputs.on("keyup", function () {
-      var studentTotal = (Utility.calculateInputValue($("#number_of_students"), 12)),
-          teacherTotal = (Utility.calculateInputValue($("#number_of_teachers"), 20)),
-          newTotal = studentTotal + teacherTotal;
-
-      totalPrice.text(newTotal);
-      totalPriceField.val(newTotal);
-    });
+  createToolTipWrapperHtml: function () {
+    return jQuery("<div id='tool_tip_wrap' class='bottom left'></div>");
   },
 
-  validateEnterpriseForm: function() {
-    $("#enterprise_form").ketchup();
-  }
-};
-
-var Video = {
-  
-  initVideos: function() {
-    Video.triggerVideo();
+  createToolTipHeaderHtml: function () {
+    return jQuery("<div id='tool_tip_header'>ToolTip</div>");
   },
 
-  triggerVideo: function() {
-    var triggerLink = $(".user_video_trigger");
-
-    triggerLink.on("click", function() {
-      var url = $(this).data("url"),
-          thumb = $(this).data("thumb");
-
-      Video.playVideo(url, thumb);
-    });
+  createToolTipContentHtml: function () {
+    return jQuery("<div id='tool_tip_content' class='tip_content'></div>");
   },
 
-  closeVideo: function() {
-    var closeLink = $(".close_link");
-
-    closeLink.on("click", function(e) {
-      var playerWrapper = $(this).siblings("#player");
-
-      playerWrapper.html("");
-      $.mask.close();
-      $(this).remove();
-      e.preventDefault();
-    });
+  createToolTipArrowHtml: function () {
+    return jQuery("<div id='tool_tip_arrow'></div>");
   },
 
-  playVideo: function(videoUrl,videoThumbUrl) {
-    var playerWindow = $("#player"),
-        playerWrap = playerWindow.parent();
+  calculateHeaderText: function (triggerElement, toolTipContent) {
+    return triggerElement.data('tooltiptitle') ? triggerElement.data('tooltiptitle') : (toolTipContent.find('.popup_header').text() ? toolTipContent.find('.popup_header').text() : "");
+  },
 
-    playerWrap.expose({
-      color: '#000',
-      loadSpeed: 200,
-      opacity: 0.9,
-      closeOnClick: false
-    });
+  infoTipPopupTriggerHtml: function (triggerElement, width, height) {
+    var popupWidth = width ? width : 300,
+        popupHeight = height ? height : 300,
+        popuptrigger = jQuery("<a id='tool_tip_popup_trigger' class='icon small_icon popup_window_icon popup_link' popupTitle='Code Desc' href='" + triggerElement.data('tooltipdataurl') + "' popupWidth='" + popupWidth + "' popupHeight='" + popupHeight + "'></a>");
 
-    playerWrap.addClass("center_wrap");
-    playerWrap.removeAttr("style");
-    playerWrap.append("<div id='close_link' class='close_link close'></div>");
-    
-    flowplayer("player", "/flowplayer/flowplayer-3.2.7.swf", {
-      clip: {
-        url: videoUrl,
-        scaling: 'orig'
+    return triggerElement.data('hastooltippopout') ? popuptrigger : "";
+  },
+
+  buildToolTipHeader: function (triggerElement, toolTipContent) {
+    var headerHtml = ToolTips.createToolTipHeaderHtml(),
+        toolTipPopupTrigger = ToolTips.infoTipPopupTriggerHtml(triggerElement),
+        headerTextValue = ToolTips.calculateHeaderText(triggerElement, toolTipContent);
+
+    headerHtml.text(headerTextValue);
+    headerHtml.append(toolTipPopupTrigger);
+    return headerHtml;
+  },
+
+  adjustForTableTip: function (tooltip) {
+    var toolTipHeader = tooltip.find('#tool_tip_header');
+
+    tooltip.removeClass('info');
+    tooltip.addClass('table_tip');
+    toolTipHeader.width(tooltip.find('#tool_tip_content').width());
+    tooltip.width(toolTipHeader.width() + 20);
+  },
+
+  drawToolTip: function (triggerElement, tooltip) {
+    var isTableTip = triggerElement.data('istabletip');
+    jQuery("body").append(tooltip);
+    ToolTips.positionToolTip(triggerElement, tooltip);
+    if (isTableTip === true) {
+      ToolTips.adjustForTableTip(tooltip);
+    }
+    Popup.initScripts();
+  },
+
+  positionToolTip: function (triggerElement, tooltip) {
+    var position = triggerElement.offset(),
+        calcHorizPosition = "",
+        calcVertPosition = "",
+        tipHeight = tooltip.outerHeight() + 10,
+        tipWidth = tooltip.outerWidth(),
+        horzPosition = position.left + tipWidth + triggerElement.outerWidth();
+
+    tooltip.css({ "position": "absolute" });
+
+    if (jQuery(window).width() < horzPosition) {
+      calcHorizPosition = (position.left - tipWidth);
+      tooltip.css({ "left": calcHorizPosition });
+      tooltip.removeClass("left").addClass("right");
+    } else {
+      calcHorizPosition = (position.left + triggerElement.outerWidth());
+      tooltip.css({ "left": calcHorizPosition });
+    }
+
+    if (position.top < tipHeight) {
+      calcVertPosition = (position.top + triggerElement.outerHeight());
+      tooltip.css({ "top": calcVertPosition });
+      tooltip.removeClass("bottom").addClass("top");
+    } else {
+      calcVertPosition = (position.top - tipHeight);
+      tooltip.css({ "top": calcVertPosition });
+    }
+  },
+
+  triggerToolTips: function () {
+    var tooltips = jQuery(".tooltip"),
+        tipIsVisible = false;
+
+    tooltips.hoverIntent({
+      over: function () {
+        var self = jQuery(this);
+        if (tipIsVisible) { clearTimeout(tipIsVisible); }
+        ToolTips.toolTipSwitch(self);
       },
-      plugins: {
-        controls: {
-          url: '/flowplayer/flowplayer.controls-3.2.5.swf',
-          playlist: false,
-          backgroundColor: '#000', 
-          time: false,
-          fullscreen: true,
-          volume: false,
-          bufferColor: '#666666',
-          buttonColor: '#666666',
-          tooltips: {
-            buttons: true, 
-            fullscreen: 'Fullscreen' 
-          } 
-        }
+      timer: 1500,
+      out: function () {
+        tipIsVisible = setTimeout(ToolTips.removeToolTip, 900);
+        jQuery("#tool_tip_wrap").on("mouseenter", function () {
+          clearTimeout(tipIsVisible);
+        });
+        jQuery("#tool_tip_wrap").on("mouseleave", function () {
+          tipIsVisible = setTimeout(ToolTips.removeToolTip, 900);
+        });
       }
     });
-    Video.closeVideo();
   }
+};
+
+var Popup = {
+
+    initScripts: function () {
+      Popup.activateLinks();
+    },
+
+    activateLinks: function (link) {
+      var triggerLinks = $(".popup_link");
+
+      triggerLinks.off("click");
+
+      triggerLinks.on("click", function (e) {
+        e.preventDefault();
+        Popup.triggerPopup($(this));
+      });
+    },
+
+    triggerPopup: function (link) {
+      var name = link.attr("popupName"),
+          title = link.attr("popupTitle"),
+          url = link.attr("href"),
+          popupWidth = link.attr("popupWidth"),
+          popupHeight = link.attr("popupHeight");
+
+      if (name) {
+        Popup.generateReusedWindow(title, url, name, popupWidth, popupHeight);
+      }
+      else {
+        Popup.generateWindow(title, url, popupWidth, popupHeight);
+      }
+    },
+
+    generateWindow: function (title, url, width, height) {
+        Popup.generatePositionedWindow(title, url, "", "", "", width, height);
+    },
+
+    generateReusedWindow: function (title, url, name, width, height) {
+        Popup.generatePositionedWindow(title, url, name, "", "", width, height);
+    },
+
+    generatePositionedWindow: function (title, url, name, top, left, width, height) {
+        var winOptions = "";
+        if (top != "") {
+            winOptions = "top=" + top + ", ";
+        };
+        if (left != "") {
+            winOptions += "left=" + left + ", ";
+        };
+        name = name.replace(/ /g, "_");
+        var win = window.open(url, name, winOptions + "width=" + width + ", height=" + height + ", toolbar=0, location=0, directories=0, status=0, menubar=0, copyhistory=0, resizable=1, scrollbars=0", true);
+        win.focus();
+    }
+
 };
 
 var Modal = {
@@ -398,7 +450,49 @@ var Tabs = {
   }
 };
 
+var Layout = {
+
+  setPanels: function() {
+    Layout.setPanelSizes();
+    Layout.setInternalContentPanel();
+  },
+
+  setPanelSizes: function() {
+    var header = $("#hd"),
+        footer = $("#footer"),
+        sidebar = $("#sidebar"),
+        content = $("#content");
+
+    sidebar.height($(window).height() - (footer.outerHeight() + header.outerHeight()));
+    content.height($(window).height() - (footer.outerHeight() + header.outerHeight()));
+
+    $(window).resize(function() {
+      sidebar.height($(window).height() - (footer.outerHeight() + header.outerHeight()));
+      content.height($(window).height() - (footer.outerHeight() + header.outerHeight()));
+    });
+  },
+
+  setInternalContentPanel: function() {
+    var contentPanel = $("#content"),
+        sidebar = $("#sidebar");
+
+    contentPanel.width($(window).width() - (sidebar.outerWidth() + 1));
+    $(window).resize(function() {
+      contentPanel.width($(window).width() - (sidebar.outerWidth() + 1));
+    });
+  }
+};
+
 var App = {
+
+  initialize: function () {
+    Flash.injectFlashBox();
+    Flash.setFlash();
+    App.initDeleteLinks();
+    Layout.setPanels();
+    Navigation.setCurrentNav();
+    ToolTips.initToolTips();
+  },
 
   initDeleteLinks: function() {
     var deleteLinks = $(".delete_link");
@@ -434,8 +528,5 @@ var App = {
 
 //**********Initialize Document**********//
 $(document).ready(function() {
-  Flash.injectFlashBox();
-  Flash.setFlash();
-  Video.initVideos();
-  App.initDeleteLinks();
+  App.initialize();
 });

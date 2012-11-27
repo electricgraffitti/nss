@@ -1,0 +1,15 @@
+<div id="title_bar" class="silver_gradient">   
+  <div class="content_wrap">
+    <div id="title_bar_left">
+      <label id="page_title"><%= page_title %></label>
+    </div>
+
+    <div id="title_bar_middle"></div>
+
+    <div id="title_bar_right">
+      <ul id="title_bar_links">
+          <%= yield :title_bar_links %>
+      </ul>
+    </div>
+  </div>
+</div>

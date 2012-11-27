@@ -1,0 +1,20 @@
+<% content_for :title_bar_links do %>
+	<li><%= link_to "Some Option", "", class: "tooltip", data: {tooltiptype: "micro", tooltiptitle: "Some Tooltip"} %></li>
+	<li><%= link_to "Some Option", "", class: "tooltip", data: {tooltiptype: "micro", tooltiptitle: "Some Other Tooltip"}%></li>
+	<li><%= link_to "Some Option", "", class: "tooltip", data: {tooltiptype: "micro", tooltiptitle: "One More Tooltip"} %></li>
+<% end %>
+<% content_for :sidebar do %>
+  <%= render partial: 'admins/dashboard_sidebar' %>
+<% end %>
+<div id="internal_content">
+
+</div>
+
+
+<% content_for :javascripts do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+
+    });
+  </script>
+<% end %>

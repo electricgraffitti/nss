@@ -1,9 +1,11 @@
-development:
+defaults: &DEFAULTS
+ version_number: 0.1
  app_name: Nucleus Student Setup
  super_user: cube2
  super_pass: coffee
 
+development:
+ <<: *DEFAULTS
+
 production:
- app_name: Nucleus Student Setup
- super_user: cube2
- super_pass: coffee
+ <<: *DEFAULTS

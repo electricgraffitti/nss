@@ -4,45 +4,32 @@
 <!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
 <!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
-  <head>
-    <%= render :partial => 'layouts/application/headmeta' %>
-  </head>
-
-  <body id="application">
-  
-    <%# Flash Notice %>
-    <%= render :partial => 'layouts/flash', :locals => {:flash => flash} %>
-  
-    <%# Header %>
-    <div id="mast_header" class="content_wrapper">
-      <div id="hd" class="internal_content_wrapper">
-        <%= link_to "Nucleus Student Setup", root_url, :id => "logo" %>
-        <%= render :partial => "layouts/application/main_nav" %>
-      </div>
+<head>
+  <%= render partial: "layouts/application/headmeta" %>
+</head>
+<body>
+  <%= render partial: 'layouts/flash', locals: {flash: flash} %>
+  <header id="hd">
+    <div id="mast_header">
+      <%= render partial: "layouts/application/header" %>
     </div>
+  </header>
+  
+  <!-- Application Layout -->
+  <div id="bd">
+    <section id="sidebar">
+      <%= yield :sidebar %>
+      <%= clear %>
+    </section>
+    <section id="content">
+      <%= yield %>
+      <%= clear %>
+    </section>
     <%= clear %>
-  
-    <%# Main Content %>
-    <div id="mast_bd_white" class="content_wrapper">
-      <div id="ajax_status">
-        <%= image_tag "ajax-loader.gif" %>
-        Loading...
-      </div>
-      <div id="bd" class="content_wrapper">
-        <%= yield %>
-    		<%= clear %>
-      </div>
-    </div>
-  
-    <%# Footer %>
-    <div id="mast_footer" class="content_wrapper">
-      <div id="ft" class="internal_content_wrapper">
-        <%= render :partial => "layouts/application/footer" %>
-      </div>
-    </div>
-    <%= yield :overlays %>
-    <%= render :partial => "layouts/cdn_scripts" %>
-    <%= render :partial => "layouts/application/scripts" %>
-  </body>
-
+  </div>
+  <%= render partial: 'layouts/application/footer' %>
+  <%= render partial: "layouts/cdn_scripts" %>
+  <%= render partial: "layouts/application/scripts" %>
+  <%= clear %>
+</body>
 </html>
