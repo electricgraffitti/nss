@@ -28,7 +28,6 @@ end
 
 group :production do
   gem "exception_notification"
-  gem 'newrelic_rpm'
   gem 'daemons'
   gem 'pg'
   gem 'thin'
