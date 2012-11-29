@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'rails', '3.2.9'
-gem 'sqlite3'
 gem 'authlogic'
 gem 'json'
 gem 'spreadsheet'
@@ -15,6 +14,7 @@ group :development, :test do
   gem 'debugger'
   gem 'thin'
   gem 'annotate', :git => 'git://github.com/ctran/annotate_models.git'
+  gem 'sqlite3'
 end
 
 group :test do
@@ -31,4 +31,5 @@ group :production do
   gem "exception_notification"
   gem 'newrelic_rpm'
   gem 'daemons'
+  gem 'pg'
 end
