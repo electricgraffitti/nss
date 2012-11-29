@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/ctran/annotate_models.git
-  revision: be4e26825b521f0b2d86b181e2dff89901aa9b1e
+  revision: 1340635ff0d6eb80f5b6815010b52dac0be0765c
   specs:
     annotate (2.6.0.beta1)
       activerecord (>= 2.3.0)
@@ -116,7 +116,8 @@ GEM
     json (1.7.5)
     launchy (2.1.0)
       addressable (~> 2.2.6)
-    libwebsocket (0.1.6.1)
+    libwebsocket (0.1.7.1)
+      addressable
       websocket
     listen (0.6.0)
     lumberjack (1.0.2)
@@ -193,7 +194,7 @@ GEM
     spork (0.9.0)
     spreadsheet (0.7.4)
       ruby-ole (>= 1.0)
-    sprockets (2.2.1)
+    sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)

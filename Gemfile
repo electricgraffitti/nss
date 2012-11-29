@@ -12,7 +12,6 @@ group :development, :test do
   gem 'rspec-rails', '2.10.0'
   gem 'guard-rspec', '0.5.5'
   gem 'debugger'
-  gem 'thin'
   gem 'annotate', :git => 'git://github.com/ctran/annotate_models.git'
   gem 'sqlite3'
 end
@@ -32,4 +31,5 @@ group :production do
   gem 'newrelic_rpm'
   gem 'daemons'
   gem 'pg'
+  gem 'thin'
 end
