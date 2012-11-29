@@ -22,7 +22,9 @@ test:
 
 production:
   adapter: postgresql
-  encoding: unicode
-  database: db/production.sqlite3
+  host: ec2-54-243-230-139.compute-1.amazonaws.com
+  database: d48ag9j0k37o8s
+  username: yuuieujqpcgdej
+  password: JhL4VaOKQpoYsQDrsDjzLIVXXO
   pool: 5
   timeout: 5000
