@@ -6,6 +6,7 @@ gem 'json'
 gem 'spreadsheet'
 gem 'capistrano'
 gem 'capistrano-ext'
+gem 'heroku'
 
 
 group :development, :test do
@@ -27,7 +28,6 @@ group :test do
 end
 
 group :production do
-  gem "exception_notification"
   gem 'daemons'
   gem 'pg'
   gem 'thin'
